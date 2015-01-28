@@ -73,6 +73,25 @@
     <script src="js/bootstrap.min.js"></script>
     <script src="https://cdn.firebase.com/js/client/2.1.1/firebase.js"></script>
     <script>
+    function getUrlParameter( sSearch, sParam ) {
+        sSearch = sSearch.substring(1);
+        var sURLVariables = sSearch.split('&');
+        for (var i = 0; i < sURLVariables.length; i++) 
+        {
+            var sParameterName = sURLVariables[i].split('=');
+            if (sParameterName[0] == sParam) 
+            {
+                return sParameterName[1];
+            }
+        }
+    }
+
+    function parseUrl( url ) {
+        var a = document.createElement('a');
+        a.href = url;
+        return a;
+    }
+
     $( "#button-submit" ).click(function() {
         if ( $('#field-url').val().length == 0 ) {
             return;
@@ -93,6 +112,25 @@
                 else {
                     $( "#field-url" ).css( "border-color", "#43ac6a" );
                     $( "#wrapper-bar" ).fadeOut( "slow" );
+
+                    // Retrieve the title of the video (so we can put it in the HipChat message).
+                    var obj_url = parseUrl( $('#field-url').val() );
+                    var str_v = getUrlParameter( obj_url.search, 'v' );
+                    $.ajax({
+                        type: "GET",
+                        url: "http://gdata.youtube.com/feeds/api/videos/" + str_v + "?v=2&alt=json"
+                    })
+                    .done(function( msg ) {
+                        var str_title = msg.entry.title.$t;
+                        var str_message = "OK, fine, I'll play this video: " + str_title;
+
+                        // Notify HipChat of the video change.
+                        $.ajax({
+                            type: "POST",
+                            url: "https://api.hipchat.com/v1/rooms/message?format=json&auth_token=4db79aed94d52b2c1750360a0232cf",
+                            data: { room_id: "150044", from: "Yeti", message: str_message }
+                        });
+                    });                    
                 } 
             });
         });
