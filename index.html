@@ -123,7 +123,7 @@
                     })
                     .done(function( msg ) {
                         var str_title = msg.items[0].snippet.title;
-                        var str_message = "Playing a video: " + str_title . ". To start playing another video, paste a YouTube URL into the form at http://yeti.yllus.com/ !";
+                        var str_message = "Playing a video: " + str_title + ". To start playing another video, paste a YouTube URL into the form at http://yeti.yllus.com/ !";
 
                         // Notify HipChat of the video change.
                         $.ajax({
