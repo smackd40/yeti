@@ -116,12 +116,13 @@
                     // Retrieve the title of the video (so we can put it in the HipChat message).
                     var obj_url = parseUrl( $('#field-url').val() );
                     var str_v = getUrlParameter( obj_url.search, 'v' );
+                    var str_api_key = 'AIzaSyB4DqodMsXHDSlL5ssujtKe8RPX6nHA9HI'
                     $.ajax({
                         type: "GET",
-                        url: "http://gdata.youtube.com/feeds/api/videos/" + str_v + "?v=2&alt=json"
+                        url: "https://www.googleapis.com/youtube/v3/videos?id=" + str_v + "&part=snippet&key=" + str_api_key
                     })
                     .done(function( msg ) {
-                        var str_title = msg.entry.title.$t;
+                        var str_title = msg.items[0].snippet.title;
                         var str_message = "OK, fine, I'll play this video: " + str_title;
 
                         // Notify HipChat of the video change.
